@@ -63,7 +63,7 @@ jobs:
         id: create
         uses: atlassian/gajira-create@v3
         with:
-          project: EA3
+          project: GIT
           issuetype: ${{ env.JIRA_ISSUETYPE }}
           summary: '${{ env.TYPE }}: ${{ github.event.issue.title }}'
           description: '${{ steps.md2jira.outputs.output-text }}'
@@ -103,6 +103,12 @@ jobs:
           echo "assignee => ${{ steps.issue-parser.outputs.issueparser_assignee }}"
           echo "label    => ${{ steps.issue-parser.outputs.issueparser_label-selection }}"
 
+      - name: Debug Assignee and Label
+        run: |
+          echo "Assignee: ${{ steps.issue-parser.outputs.issueparser_assignee }}"
+          echo "Label: ${{ steps.issue-parser.outputs.issueparser_label-selection }}"
+
+
       - name: Add GitHub label to issue
         uses: actions-cool/issues-helper@v3
         with:
@@ -117,7 +123,7 @@ jobs:
           ISSUE_KEY="${{ steps.create.outputs.issue }}"  # EA3-34
           RAW_TITLE="${{ steps.issue-parser.outputs.issueparser_branch }}"  # login
           TYPE=$(echo "${{ env.TYPE }}" | tr '[:upper:]' '[:lower:]')  # feature
-          
+    
           SANITIZED_TITLE=$(echo "$RAW_TITLE" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g' | sed 's/[^a-z0-9_-]//g')
           BRANCH_NAME="${TYPE}/${ISSUE_KEY}-${SANITIZED_TITLE}"
           echo "📌 Branch to be created: $BRANCH_NAME"
