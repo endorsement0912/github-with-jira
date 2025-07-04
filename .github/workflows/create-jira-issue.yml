@@ -78,11 +78,16 @@ jobs:
       - name: Log created issue
         run: echo "Jira Issue ${{ steps.issue-parser.outputs.parentKey }}/${{ steps.create.outputs.issue }} was created"
 
+      - name: Checkout main code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
       - name: Convert label-selection to Capitalized TYPE
         run: |
           LABEL="${{ steps.issue-parser.outputs.issueparser_label-selection }}"
           case "$LABEL" in
-            feature) TYPE="Feature" ;;
+            feat) TYPE="Feature" ;;
             fix) TYPE="Fix" ;;
             docs) TYPE="Docs" ;;
             style) TYPE="Style" ;;
@@ -93,10 +98,15 @@ jobs:
           esac
           echo "TYPE=$TYPE" >> $GITHUB_ENV
 
-      - name: Checkout main code
-        uses: actions/checkout@v4
+            - name: Update GitHub Issue Title (ex: fix: login)
+
+        uses: actions-cool/issues-helper@v3
         with:
-          ref: main
+          actions: 'update-title'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          title: '${{ steps.issue-parser.outputs.issueparser_label-selection }}: ${{ steps.issue-parser.outputs.issueparser_branch }}'
+
 
       - name: Log Issue Parser
         run: |
