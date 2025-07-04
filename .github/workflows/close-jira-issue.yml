@@ -23,10 +23,27 @@ jobs:
           ISSUE_TITLE="${{ github.event.issue.title }}"
           JIRA_KEY=$(echo "$ISSUE_TITLE" | grep -oE '[A-Z]+-[0-9]+')
           echo "JIRA_KEY=$JIRA_KEY" >> $GITHUB_ENV
+          echo "jira_key=$JIRA_KEY" >> $GITHUB_OUTPUT
 
-      - name: Close Jira issue
-        if: env.JIRA_KEY != ''
+      - name: Get transition ID for 'Done'
+        id: get-transition-id
+        run: |
+          response=$(curl -s -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+            -H "Accept: application/json" \
+            "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ steps.extract-key.outputs.jira_key }}/transitions")
+
+          transition_id=$(echo "$response" | jq -r '.transitions[] | select(.name | test("Done|완료")) | .id')
+
+          if [ -z "$transition_id" ]; then
+            echo "❌ 'Done' 상태로 전이 가능한 transition을 찾을 수 없습니다."
+            exit 1
+          fi
+
+          echo "TRANSITION_ID=$transition_id" >> $GITHUB_ENV
+          echo "transition_id=$transition_id" >> $GITHUB_OUTPUT
+
+      - name: Close Jira issue dynamically
         uses: atlassian/gajira-transition@v3
         with:
           issue: ${{ env.JIRA_KEY }}
-          transition: "41"
+          transition: ${{ steps.get-transition-id.outputs.transition_id }}
