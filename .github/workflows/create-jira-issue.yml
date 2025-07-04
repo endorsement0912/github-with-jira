@@ -115,7 +115,6 @@ jobs:
           echo "Assignee: ${{ steps.issue-parser.outputs.issueparser_assignee }}"
           echo "Label: ${{ steps.issue-parser.outputs.issueparser_label-selection }}"
 
-
       - name: Add GitHub label to issue
         uses: actions-cool/issues-helper@v3
         with:
