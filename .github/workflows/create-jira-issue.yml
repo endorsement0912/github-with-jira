@@ -105,8 +105,7 @@ jobs:
           actions: 'update-title'
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
-          title: '${{ steps.issue-parser.outputs.issueparser_label-selection }}: ${{
-            steps.issue-parser.outputs.issueparser_branch }}'
+          title: '${{ steps.issue-parser.outputs.issueparser_label-selection }}: ${{ steps.issue-parser.outputs.issueparser_branch }}'
 
       - name: Log Issue Parser
         run: |
