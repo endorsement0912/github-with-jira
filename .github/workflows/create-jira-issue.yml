@@ -98,6 +98,11 @@ jobs:
         with:
           ref: develop
 
+      - name: Log Issue Parser
+        run: |
+          echo "assignee => ${{ steps.issue-parser.outputs.issueparser_assignee }}"
+          echo "label    => ${{ steps.issue-parser.outputs.issueparser_label-selection }}"
+
       - name: Add GitHub label to issue
         uses: actions-cool/issues-helper@v3
         with:
