@@ -11,6 +11,7 @@ body:
       multiple: false
       options:
         - endorsement0912
+        - test2
     validations:
       required: true
 
@@ -27,8 +28,8 @@ body:
     id: branch
     attributes:
       label: '🌿 브랜치명 (Branch)'
-      description: '이슈와 관련된 브랜치명을 작성해주세요 (EA3-Task_number/타입명/기능명)'
-      placeholder: 'EA3-Task number/타입/기능명'
+      description: '이슈와 관련된 브랜치명을 작성해주세요 (타입명/EA3-Task_number-기능명)'
+      placeholder: '타입명/EA3-Task number-기능명'
     validations:
       required: true
 

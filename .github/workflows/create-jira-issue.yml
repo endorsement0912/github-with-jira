@@ -49,12 +49,23 @@ jobs:
             ${{ github.event.issue.body }}
           mode: md2jira
 
+      - name: Map GitHub label to Jira issuetype
+        run: |
+          LABEL="${{ steps.issue-parser.outputs.issueparser_label-selection }}"
+          case "$LABEL" in
+            fix) JIRA_ISSUETYPE="Bug" ;;
+            feat|docs|style|refactor|test|chore) JIRA_ISSUETYPE="Task" ;;
+            *) JIRA_ISSUETYPE="Task" ;;
+          esac
+          echo "JIRA_ISSUETYPE=$JIRA_ISSUETYPE" >> $GITHUB_ENV
+
+
       - name: Create Issue
         id: create
         uses: atlassian/gajira-create@v3
         with:
           project: EA3
-          issuetype: ${{ steps.issue-parser.outputs.issueparser_label-selection }}
+          issuetype: ${{ env.JIRA_ISSUETYPE }}
           summary: '${{ env.TYPE }}: ${{ github.event.issue.title }}'
           description: '${{ steps.md2jira.outputs.output-text }}'
           fields: |
@@ -87,6 +98,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: develop
+
+      - name: Add GitHub label to issue
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'add-labels'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          labels: |
+            ${{ steps.issue-parser.outputs.issueparser_label-selection }}
 
       - name: Create branch with Epic number
         run: |
