@@ -4,4 +4,4 @@ issue_templates:
   - name: '이슈 생성'
     description: 'Repo에 이슈를 생성하며, 생성된 이슈는 Jira와 연동됩니다.'
     labels: []
-    file: issue-form.yml
+    file: ISSUE_TEMPLATE/issue-form.yml  # ← 반드시 경로 포함!
