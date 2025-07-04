@@ -11,7 +11,7 @@ body:
       multiple: false
       options:
         - endorsement0912
-        - test
+        - jihoo1214
     validations:
       required: true
 
