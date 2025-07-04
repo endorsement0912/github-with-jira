@@ -97,9 +97,7 @@ jobs:
           esac
           echo "TYPE=$TYPE" >> $GITHUB_ENV
 
-      - name:
-          Update GitHub Issue Title (ex:
-            fix: login)
+      - name: Update GitHub Issue Title
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'update-title'
