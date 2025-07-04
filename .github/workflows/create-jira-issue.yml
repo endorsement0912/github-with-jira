@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   create-issue:
-    name: Create Jira issue
+    if: github.event_name == 'issues'
     runs-on: ubuntu-latest
     steps:
       - name: Login
