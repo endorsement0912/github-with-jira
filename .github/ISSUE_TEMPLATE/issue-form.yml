@@ -19,19 +19,20 @@ body:
     id: parentKey
     attributes:
       label: '🎟️ 상위 작업 (Epic Number)'
-      description: '상위 작업의 Epic Number를 기입해주세요 (EA3-Epic Number)'
-      placeholder: 'EA3-Epic Number'
+      description: '상위 작업의 Epic Number를 기입해주세요'
+      placeholder: 'Epic Number'
     validations:
       required: true
 
   - type: input
     id: branch
     attributes:
-      label: '🌿 브랜치명 (Branch)'
-      description: '이슈와 관련된 브랜치명을 작성해주세요 (타입명/EA3-Task_number-기능명)'
-      placeholder: '타입명/EA3-Task number-기능명'
+      label: '🌿 기능명 (Feature Name)'
+      description: '기능명을 입력해주세요 (ex. login, dashboard)'
+      placeholder: '기능명 ex) login'
     validations:
       required: true
+
 
   - type: dropdown
     id: label-selection
