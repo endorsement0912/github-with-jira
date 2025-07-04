@@ -1,8 +1,15 @@
 name: '이슈 생성'
-description: 'Repo에 이슈를 생성하며, 생성된 이슈는 Jira와 연동됩니다.'
-title: '기능명만 입력해주세요'
-labels: []
+description: 'Repo에 이슈를 생성하며, 생성된 이슈는 Jira와 연동됩니다.'세요'
 body:
+  - type: input
+    id: feature-name
+    attributes:
+      label: "이슈 제목"
+      description: "예: login, register, dashboard 등"
+      placeholder: "이슈 제목을 입력해주세요"
+    validations:
+      required: true
+
   - type: dropdown
     id: assignee
     attributes:
