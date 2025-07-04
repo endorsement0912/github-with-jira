@@ -6,7 +6,7 @@ body:
   - type: dropdown
     id: assignee
     attributes:
-      label: '🧑‍💻 담당자 선택 (GitHub ID)'
+      label: '🧑‍💻 담당자'
       description: '담당할 팀원의 GitHub 계정을 선택해주세요'
       multiple: false
       options:
@@ -37,7 +37,7 @@ body:
   - type: dropdown
     id: label-selection
     attributes:
-      label: '🏷️ 라벨 선택 (Label)'
+      label: '🏷️ 라벨 (Label)'
       description: '이슈의 성격에 맞는 라벨을 선택해주세요'
       multiple: false
       options:
