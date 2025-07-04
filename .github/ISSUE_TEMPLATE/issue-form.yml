@@ -11,7 +11,7 @@ body:
       multiple: false
       options:
         - endorsement0912
-        - test2
+        - test
     validations:
       required: true
 

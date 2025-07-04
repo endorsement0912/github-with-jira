@@ -59,7 +59,6 @@ jobs:
           esac
           echo "JIRA_ISSUETYPE=$JIRA_ISSUETYPE" >> $GITHUB_ENV
 
-
       - name: Create Issue
         id: create
         uses: atlassian/gajira-create@v3
