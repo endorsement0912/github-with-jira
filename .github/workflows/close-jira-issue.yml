@@ -31,16 +31,17 @@ jobs:
           response=$(curl -s -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
             -H "Accept: application/json" \
             "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ steps.extract-key.outputs.jira_key }}/transitions")
-
+      
           transition_id=$(echo "$response" | jq -r '.transitions[] | select(.name | test("Done|완료")) | .id')
-
+      
           if [ -z "$transition_id" ]; then
             echo "❌ 'Done' 상태로 전이 가능한 transition을 찾을 수 없습니다."
             exit 1
           fi
-
+      
           echo "TRANSITION_ID=$transition_id" >> $GITHUB_ENV
-          echo "transition_id=$transition_id" >> $GITHUB_OUTPUT
+          echo  "transition_id=$transition_id" >> "$GITHUB_OUTPUT"  # ✅ 핵심!
+
 
       - name: Close Jira issue dynamically
         uses: atlassian/gajira-transition@v3
