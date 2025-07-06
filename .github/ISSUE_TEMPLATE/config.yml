@@ -4,7 +4,6 @@ issue_templates:
   - name: '✨ issue-form'
     description: 'Repo에 이슈를 생성하며, 생성된 이슈는 Jira와 연동됩니다.'
     file: ISSUE_TEMPLATE/issue-form.yml
-
   - name: '🐛 fix-template'
     description: '버그 발생 시 사용해주세요'
     file: ISSUE_TEMPLATE/fix-form.yml
