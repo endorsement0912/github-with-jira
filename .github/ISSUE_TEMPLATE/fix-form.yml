@@ -1,6 +1,6 @@
 name: '🐛 fix-template'
 description: '버그 발생 시 사용해주세요'
-labels: ["fix"]
+labels: []
 body:
   - type: dropdown
     id: assignee
@@ -32,6 +32,17 @@ body:
       label: '🔠 기능명 (Bug Name)'
       description: '기능명을 입력해주세요 (ex. login, dashboard)'
       placeholder: '기능명 ex) login'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: label-selection
+    attributes:
+      label: '🏷️ 라벨 (Label)'
+      description: '자동으로 라벨이 fix로 지정됩니다.'
+      multiple: false
+      options:
+        - fix
     validations:
       required: true
 

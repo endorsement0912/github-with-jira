@@ -125,7 +125,7 @@ jobs:
             ${{ steps.issue-parser.outputs.issueparser_label-selection }}
 
       - name: Create branch with Epic number
-        if: env.TYPE != 'Fix'
+        if: steps.issue-parser.outputs.issueparser_label-selection != 'fix'
         run: |
           ISSUE_KEY="${{ steps.create.outputs.issue }}"  # GIT-8
           RAW_TITLE="${{ steps.issue-parser.outputs.issueparser_branch }}"  # login
