@@ -24,8 +24,9 @@ jobs:
           ISSUE_TITLE="${{ github.event.issue.title }}"
           echo "ISSUE_TITLE=$ISSUE_TITLE"
 
-          # Jira 키 추출 (EA3-2 같은 형식)
-          JIRA_KEY=$(echo "$ISSUE_TITLE" | grep -oE '[A-Z]+-[0-9]+')
+          # 대괄호 포함 여부에 관계없이 Jira 키 추출
+          JIRA_KEY=$(echo "$ISSUE_TITLE" | grep -oE '\[?[A-Z]+-[0-9]+\]?')
+          JIRA_KEY=$(echo "$JIRA_KEY" | sed 's/\[//;s/\]//')
 
           if [ -z "$JIRA_KEY" ]; then
             echo "❌ Jira 키 추출 실패: 제목에서 키를 찾을 수 없습니다."
@@ -35,6 +36,7 @@ jobs:
           echo "✅ 추출된 Jira 키: $JIRA_KEY"
           echo "JIRA_KEY=$JIRA_KEY" >> $GITHUB_ENV
           echo "jira_key=$JIRA_KEY" >> $GITHUB_OUTPUT
+      
 
       - name: Get transition ID for 'Done'
         id: get-transition-id
