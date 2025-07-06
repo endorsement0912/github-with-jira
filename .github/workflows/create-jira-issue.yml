@@ -63,7 +63,7 @@ jobs:
         id: create
         uses: atlassian/gajira-create@v3
         with:
-          project: GIT
+          project: EA3
           issuetype: ${{ env.JIRA_ISSUETYPE }}
           summary: '${{ github.event.issue.title }}'
           description: '${{ steps.md2jira.outputs.output-text }}'
