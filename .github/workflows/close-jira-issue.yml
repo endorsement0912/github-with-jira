@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install jq (for parsing JSON)
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: Login to Jira
         uses: atlassian/gajira-login@v3
         env:
@@ -22,9 +25,9 @@ jobs:
         id: extract-key
         run: |
           ISSUE_TITLE="${{ github.event.issue.title }}"
-          echo "ISSUE_TITLE=$ISSUE_TITLE"
+          echo "📌 ISSUE_TITLE=$ISSUE_TITLE"
 
-          # ✅ 정확한 대문자 범위 사용
+          # Jira 키 추출 (예: EA3-3)
           JIRA_KEY=$(echo "$ISSUE_TITLE" | grep -oE '[A-Z]+-[0-9]+')
 
           if [ -z "$JIRA_KEY" ]; then
@@ -35,13 +38,13 @@ jobs:
           echo "✅ 추출된 Jira 키: $JIRA_KEY"
           echo "JIRA_KEY=$JIRA_KEY" >> $GITHUB_ENV
           echo "jira_key=$JIRA_KEY" >> $GITHUB_OUTPUT
-      
+          echo "::set-output name=jira_key::$JIRA_KEY"  # (백업용)
 
       - name: Get transition ID for 'Done'
         id: get-transition-id
         run: |
           echo "👉 추출된 JIRA 키: ${{ steps.extract-key.outputs.jira_key }}"
-          echo "🔍 이슈 전이 ID를 조회합니다..."
+          echo "🔍 Jira 이슈 전이 상태 목록 조회..."
 
           response=$(curl -s -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
             -H "Accept: application/json" \
@@ -57,7 +60,7 @@ jobs:
           transition_id=$(echo "$response" | jq -r '.transitions[] | select(.name | test("Done|완료")) | .id')
 
           if [ -z "$transition_id" ]; then
-            echo "✅ 현재 상태에서 DONE으로 전이 불가능하므로 스킵합니다."
+            echo "⚠️ 현재 상태에서 'Done' 전이가 불가능하므로 스킵합니다."
             echo "skip=true" >> $GITHUB_ENV
           else
             echo "✅ 선택된 전이 ID: $transition_id"
