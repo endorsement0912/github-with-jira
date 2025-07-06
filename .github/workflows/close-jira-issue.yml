@@ -24,7 +24,7 @@ jobs:
           ISSUE_TITLE="${{ github.event.issue.title }}"
           echo "ISSUE_TITLE=$ISSUE_TITLE"
 
-          # Jira 키 (예: EA3-2) 추출: 괄호 없는 전제하에 단순 정규식
+          # ✅ 정확한 대문자 범위 사용
           JIRA_KEY=$(echo "$ISSUE_TITLE" | grep -oE '[A-Z]+-[0-9]+')
 
           if [ -z "$JIRA_KEY" ]; then
@@ -35,7 +35,7 @@ jobs:
           echo "✅ 추출된 Jira 키: $JIRA_KEY"
           echo "JIRA_KEY=$JIRA_KEY" >> $GITHUB_ENV
           echo "jira_key=$JIRA_KEY" >> $GITHUB_OUTPUT
-
+      
 
       - name: Get transition ID for 'Done'
         id: get-transition-id
