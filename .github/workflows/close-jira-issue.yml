@@ -21,7 +21,7 @@ jobs:
         run: |
           ISSUE_TITLE="${{ github.event.issue.title }}"
           echo "📌 ISSUE_TITLE=$ISSUE_TITLE"
-          JIRA_KEY=$(echo "$ISSUE_TITLE" | grep -oE '[A-Z]+-[0-9]+')
+          JIRA_KEY=$(echo "$ISSUE_TITLE" | grep -oE '[A-Z0-9]+-[0-9]+')
 
           if [ -z "$JIRA_KEY" ]; then
             echo "❌ JIRA 키 추출 실패"
