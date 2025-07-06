@@ -1,6 +1,6 @@
 name: '🐛 fix-template'
 description: '버그 발생 시 사용해주세요'
-labels: []
+labels: ["fix"]
 body:
   - type: dropdown
     id: assignee
