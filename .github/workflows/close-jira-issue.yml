@@ -23,8 +23,8 @@ jobs:
         run: |
           ISSUE_TITLE="${{ github.event.issue.title }}"
           JIRA_KEY=$(echo "$ISSUE_TITLE" | grep -oE '[A-Z]+-[0-9]+')
-          echo "JIRA_KEY=$JIRA_KEY" >> $GITHUB_ENV
-          echo "jira_key=$JIRA_KEY" >> $GITHUB_OUTPUT
+          echo "JIRA_KEY=$JIRA_KEY"
+          echo "jira_key=$JIRA_KEY" >> $GITHUB_ENV
 
       - name: Get transition ID for 'Done'
         id: get-transition-id
@@ -32,22 +32,24 @@ jobs:
           echo "🔍 이슈 전이 ID를 조회합니다..."
           response=$(curl -s -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
             -H "Accept: application/json" \
-            "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ steps.extract-key.outputs.jira_key }}/transitions")
-          
+            "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ env.jira_key }}/transitions")
+
           echo "📦 Jira 응답: $response"
-          
+
           transition_id=$(echo "$response" | jq -r '.transitions[] | select(.name | test("Done|완료")) | .id')
-          
+
           if [ -z "$transition_id" ]; then
-            echo "❌ 'Done' 상태로 전이 가능한 transition을 찾을 수 없습니다."
-            exit 1
+            echo "✅ 현재 상태에서 DONE으로 전이 불가능하므로 스킵합니다."
+            echo "skip=true" >> $GITHUB_ENV
+          else
+            echo "✅ 선택된 전이 ID: $transition_id"
+            echo "transition_id=$transition_id" >> $GITHUB_ENV
+            echo "skip=false" >> $GITHUB_ENV
           fi
-          
-          echo "✅ 선택된 전이 ID: $transition_id"
-          echo "::set-output name=transition_id::$transition_id"
 
       - name: Close Jira issue dynamically
+        if: env.skip == 'false'
         uses: atlassian/gajira-transition@v3
         with:
-          issue: ${{ steps.extract-key.outputs.jira_key }}
-          transition: ${{ steps.get-transition-id.outputs.transition_id }}
+          issue: ${{ env.jira_key }}
+          transition: ${{ env.transition_id }}
