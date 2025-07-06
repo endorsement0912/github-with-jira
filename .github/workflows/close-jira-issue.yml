@@ -44,10 +44,10 @@ jobs:
           fi
 
           echo "✅ 선택된 전이 ID: $transition_id"
-          echo "transition_id=$transition_id" >> $GITHUB_OUTPUT
+          echo "transition_id=$transition_id" >> "$GITHUB_OUTPUT"
 
       - name: Close Jira issue dynamically
         uses: atlassian/gajira-transition@v3
         with:
-          issue: ${{ env.JIRA_KEY }}
+          issue: ${{ steps.extract-key.outputs.jira_key }}
           transition: ${{ steps.get-transition-id.outputs.transition_id }}
