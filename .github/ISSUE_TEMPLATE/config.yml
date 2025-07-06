@@ -6,3 +6,8 @@ issue_templates:
     labels: []
     file: ISSUE_TEMPLATE/issue-form.yml
     type: 'yaml'
+  - name: '🐛 fix-template'
+    description: '버그 발생 시 사용해주세요'
+    labels: []
+    file: ISSUE_TEMPLATE/fix-form.yml
+    type: 'yaml'
