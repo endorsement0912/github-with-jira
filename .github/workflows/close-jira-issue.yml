@@ -24,9 +24,9 @@ jobs:
           ISSUE_TITLE="${{ github.event.issue.title }}"
           echo "ISSUE_TITLE=$ISSUE_TITLE"
 
-          # 대괄호 포함 여부에 관계없이 Jira 키 추출
-          JIRA_KEY=$(echo "$ISSUE_TITLE" | grep -oE '\[?[A-Z]+-[0-9]+\]?')
-          JIRA_KEY=$(echo "$JIRA_KEY" | sed 's/\[//;s/\]//')
+          # 대괄호 포함된 Jira 키 또는 일반 Jira 키 추출
+          RAW_KEY=$(echo "$ISSUE_TITLE" | grep -oE '\[[A-Z]+-[0-9]+\]|[A-Z]+-[0-9]+' | head -n1)
+          JIRA_KEY=$(echo "$RAW_KEY" | sed 's/\[//;s/\]//')
 
           if [ -z "$JIRA_KEY" ]; then
             echo "❌ Jira 키 추출 실패: 제목에서 키를 찾을 수 없습니다."
@@ -36,7 +36,6 @@ jobs:
           echo "✅ 추출된 Jira 키: $JIRA_KEY"
           echo "JIRA_KEY=$JIRA_KEY" >> $GITHUB_ENV
           echo "jira_key=$JIRA_KEY" >> $GITHUB_OUTPUT
-      
 
       - name: Get transition ID for 'Done'
         id: get-transition-id
@@ -50,7 +49,6 @@ jobs:
 
           echo "📦 Jira 응답: $response"
 
-          # 👉 Jira 에러 메시지 확인
           if echo "$response" | jq -e '.errorMessages?' >/dev/null; then
             echo "❌ Jira 에러 발생: $(echo "$response" | jq -r '.errorMessages[]')"
             exit 1
@@ -73,4 +71,3 @@ jobs:
         with:
           issue: ${{ steps.extract-key.outputs.jira_key }}
           transition: ${{ env.transition_id }}
-
