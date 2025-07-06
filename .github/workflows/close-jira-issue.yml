@@ -36,28 +36,28 @@ jobs:
         if: env.skip == 'false'
         id: get-transition
         run: |
-          echo "📋 이슈 전이 목록 조회 중..."
-
           response=$(curl -s -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
             -H "Accept: application/json" \
             "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${JIRA_KEY}/transitions")
 
-          echo "응답: $response"
+          echo "📦 Response: $response"
 
-          # "Done" 또는 "완료"를 이름으로 갖는 전이 찾기
-          TRANSITION_ID=$(echo "$response" | jq -r '.transitions[] | select(.name | test("Done|완료")) | .id')
+          TRANSITION_ID=$(echo "$response" | jq -r '.transitions[] | select(.name | test("완료|Done|업무 완료")) | .id')
 
           if [ -z "$TRANSITION_ID" ]; then
-            echo "❌ 전이 ID를 찾을 수 없습니다."
+            echo "❌ 전이 ID 찾기 실패"
             echo "skip=true" >> $GITHUB_ENV
           else
             echo "✅ 전이 ID: $TRANSITION_ID"
             echo "TRANSITION_ID=$TRANSITION_ID" >> $GITHUB_ENV
+            echo "skip=false" >> $GITHUB_ENV
           fi
 
-      - name: Close Jira issue
+      - name: Close Jira issue with curl
         if: env.skip == 'false'
-        uses: atlassian/gajira-transition@v3
-        with:
-          issue: ${{ env.JIRA_KEY }}
-          transition: ${{ env.TRANSITION_ID }}
+        run: |
+          curl -X POST \
+            -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+            -H "Accept: application/json" -H "Content-Type: application/json" \
+            --data "{ \"transition\": { \"id\": \"${{ env.TRANSITION_ID }}\" } }" \
+            "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ env.JIRA_KEY }}/transitions"
