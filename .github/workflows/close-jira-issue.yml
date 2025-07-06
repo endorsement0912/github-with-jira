@@ -36,6 +36,16 @@ jobs:
             echo "JIRA_KEY=$JIRA_KEY" >> $GITHUB_ENV
           fi
 
+      - name: Close Jira issue dynamically (debug)
+        if: env.skip == 'false'
+        run: |
+          echo "🔄 이슈 전이 시도 중..."
+          curl -X POST \
+            -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+            -H "Accept: application/json" -H "Content-Type: application/json" \
+            --data "{ \"transition\": { \"id\": \"${{ env.transition_id }}\" } }" \
+            "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ env.JIRA_KEY }}/transitions"
+
       - name: Close Jira issue
         if: env.JIRA_KEY != ''
         uses: atlassian/gajira-transition@v3
