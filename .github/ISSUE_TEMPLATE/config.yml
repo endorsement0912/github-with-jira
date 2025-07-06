@@ -1,13 +1,9 @@
 blank_issues_enabled: false
 contact_links: []
 issue_templates:
-  - name: '이슈 생성'
+  - name: '✨ issue-form'
     description: 'Repo에 이슈를 생성하며, 생성된 이슈는 Jira와 연동됩니다.'
-    labels: []
     file: ISSUE_TEMPLATE/issue-form.yml
-    type: 'yaml'
   - name: '🐛 fix-template'
     description: '버그 발생 시 사용해주세요'
-    labels: []
     file: ISSUE_TEMPLATE/fix-form.yml
-    type: 'yaml'
