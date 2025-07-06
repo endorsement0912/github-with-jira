@@ -1,4 +1,4 @@
-name: '이슈 생성'
+name: '🐛 fix-template'
 description: 'Repo에 이슈를 생성하며, 생성된 이슈는 Jira와 연동됩니다.'
 labels: []
 body:
