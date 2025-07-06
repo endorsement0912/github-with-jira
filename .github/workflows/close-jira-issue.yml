@@ -1,4 +1,5 @@
 name: Close Jira issue
+
 on:
   issues:
     types:
@@ -20,9 +21,20 @@ jobs:
       - name: Extract Jira issue key from GitHub issue title
         id: extract-key
         run: |
+          set +e
           ISSUE_TITLE="${{ github.event.issue.title }}"
+          echo "📌 ISSUE_TITLE=$ISSUE_TITLE"
+
           JIRA_KEY=$(echo "$ISSUE_TITLE" | grep -oE '[A-Z]+-[0-9]+')
-          echo "JIRA_KEY=$JIRA_KEY" >> $GITHUB_ENV
+
+          if [ -z "$JIRA_KEY" ]; then
+            echo "❌ JIRA 키를 추출하지 못했습니다."
+            echo "JIRA_KEY=" >> $GITHUB_ENV
+            exit 0
+          else
+            echo "✅ 추출된 JIRA 키: $JIRA_KEY"
+            echo "JIRA_KEY=$JIRA_KEY" >> $GITHUB_ENV
+          fi
 
       - name: Close Jira issue
         if: env.JIRA_KEY != ''
