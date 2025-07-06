@@ -62,13 +62,12 @@ body:
       label: '💡 예상 결과'
       description: '예상했던 정상적인 결과가 어떤 것이었는지 설명해주세요'
     validations:
-      required: true
-
+      required: true요
   - type: textarea
     id: actual-behavior
     attributes:
       label: '🚩 실제 동작'
-      description: '현재 어떻게 동작하는지 설명해주세'
+      description: '현재 어떻게 동작하는지 설명해주세요'
     validations:
       required: true
 
