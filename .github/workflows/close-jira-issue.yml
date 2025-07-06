@@ -7,17 +7,10 @@ on:
 
 jobs:
   close-issue:
-    name: Close Jira issue
+    name: Close Jira issue (Team-managed)
     runs-on: ubuntu-latest
 
     steps:
-      - name: Login to Jira
-        uses: atlassian/gajira-login@v3
-        env:
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
-
       - name: Extract Jira issue key from GitHub issue title
         id: extract-key
         run: |
@@ -28,28 +21,21 @@ jobs:
           JIRA_KEY=$(echo "$ISSUE_TITLE" | grep -oE '[A-Z]+-[0-9]+')
 
           if [ -z "$JIRA_KEY" ]; then
-            echo "❌ JIRA 키를 추출하지 못했습니다."
+            echo "❌ JIRA 키 추출 실패"
             echo "JIRA_KEY=" >> $GITHUB_ENV
             exit 0
-          else
-            echo "✅ 추출된 JIRA 키: $JIRA_KEY"
-            echo "JIRA_KEY=$JIRA_KEY" >> $GITHUB_ENV
           fi
 
-      - name: Close Jira issue dynamically (debug)
-        if: env.skip == 'false'
-        run: |
-          echo "🔄 이슈 전이 시도 중..."
-          curl -X POST \
-            -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
-            -H "Accept: application/json" -H "Content-Type: application/json" \
-            --data "{ \"transition\": { \"id\": \"${{ env.transition_id }}\" } }" \
-            "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ env.JIRA_KEY }}/transitions"
+          echo "✅ 추출된 JIRA 키: $JIRA_KEY"
+          echo "JIRA_KEY=$JIRA_KEY" >> $GITHUB_ENV
 
-      - name: Close Jira issue
+      - name: Close Jira issue (Team-managed 방식)
         if: env.JIRA_KEY != ''
-        uses: atlassian/gajira-transition@v3
-        with:
-          issue: ${{ env.JIRA_KEY }}
-          transition: Done
-
+        run: |
+          echo "✅ Jira 상태를 '완료'로 변경 중..."
+          curl -X PUT \
+            -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+            -H "Accept: application/json" \
+            -H "Content-Type: application/json" \
+            --data '{ "fields": { "status": { "name": "완료" } } }' \
+            "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ env.JIRA_KEY }}"
