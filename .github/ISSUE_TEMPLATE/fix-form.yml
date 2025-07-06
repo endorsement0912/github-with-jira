@@ -47,7 +47,7 @@ body:
     id: bug-scenario
     attributes:
       label: '🚨 버그 발생 상황'
-      description: '어떤 상황에서 발생했는지 설명해주세요 (Given-When-Then 형식 추천)'
+      description: '어떤 상황에서 발생했는지 설명해주세요 (Given-When-Then 형식)'
       placeholder: |
         예시:
         - Given: 사용자가 로그인 페이지에 접근했을 때
@@ -60,7 +60,7 @@ body:
     id: expected-behavior
     attributes:
       label: '💡 예상 결과'
-      description: '정상 동작 시 어떤 결과가 나와야 했는지 설명해주세요'
+      description: '예상했던 정상적인 결과가 어떤 것이었는지 설명해주세요'
     validations:
       required: true
 
@@ -68,7 +68,7 @@ body:
     id: actual-behavior
     attributes:
       label: '🚩 실제 동작'
-      description: '실제 동작이 어떻게 나왔는지 설명해주세요'
+      description: '현재 어떻게 동작하는지 설명해주세'
     validations:
       required: true
 
@@ -76,7 +76,7 @@ body:
     id: possible-solution
     attributes:
       label: '🛠️ 가능한 해결 방법'
-      description: '문제를 해결하기 위한 아이디어나 추측이 있다면 작성해주세요'
+      description: '문제를 해결하기 위한 아이디어가 있다면 간단히 작성해주세요'
     validations:
       required: false
 
@@ -84,6 +84,6 @@ body:
     id: additional-info
     attributes:
       label: '📎 추가 정보'
-      description: '스크린샷, 에러 로그, 브라우저/환경 정보 등 부가 정보를 입력해주세요'
+      description: '문제와 관련된 스크린샷이나 에러 로그 또는 기타 참고 자료를 첨부해주세요'
     validations:
       required: false
