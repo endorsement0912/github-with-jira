@@ -62,7 +62,8 @@ body:
       label: '💡 예상 결과'
       description: '예상했던 정상적인 결과가 어떤 것이었는지 설명해주세요'
     validations:
-      required: true요
+      required: true
+
   - type: textarea
     id: actual-behavior
     attributes:
