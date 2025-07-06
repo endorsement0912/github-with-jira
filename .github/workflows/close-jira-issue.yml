@@ -1,5 +1,4 @@
 name: Close Jira issue
-
 on:
   issues:
     types:
@@ -11,9 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install jq (for parsing JSON)
-        run: sudo apt-get update && sudo apt-get install -y jq
-
       - name: Login to Jira
         uses: atlassian/gajira-login@v3
         env:
@@ -25,52 +21,12 @@ jobs:
         id: extract-key
         run: |
           ISSUE_TITLE="${{ github.event.issue.title }}"
-          echo "📌 ISSUE_TITLE=$ISSUE_TITLE"
-
-          # Jira 키 추출 (예: EA3-3)
           JIRA_KEY=$(echo "$ISSUE_TITLE" | grep -oE '[A-Z]+-[0-9]+')
-
-          if [ -z "$JIRA_KEY" ]; then
-            echo "❌ Jira 키 추출 실패: 제목에서 키를 찾을 수 없습니다."
-            exit 1
-          fi
-
-          echo "✅ 추출된 Jira 키: $JIRA_KEY"
           echo "JIRA_KEY=$JIRA_KEY" >> $GITHUB_ENV
-          echo "jira_key=$JIRA_KEY" >> $GITHUB_OUTPUT
-          echo "::set-output name=jira_key::$JIRA_KEY"  # (백업용)
 
-      - name: Get transition ID for 'Done'
-        id: get-transition-id
-        run: |
-          echo "👉 추출된 JIRA 키: ${{ steps.extract-key.outputs.jira_key }}"
-          echo "🔍 Jira 이슈 전이 상태 목록 조회..."
-
-          response=$(curl -s -u "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
-            -H "Accept: application/json" \
-            "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ steps.extract-key.outputs.jira_key }}/transitions")
-
-          echo "📦 Jira 응답: $response"
-
-          if echo "$response" | jq -e '.errorMessages?' >/dev/null; then
-            echo "❌ Jira 에러 발생: $(echo "$response" | jq -r '.errorMessages[]')"
-            exit 1
-          fi
-
-          transition_id=$(echo "$response" | jq -r '.transitions[] | select(.name | test("Done|완료")) | .id')
-
-          if [ -z "$transition_id" ]; then
-            echo "⚠️ 현재 상태에서 'Done' 전이가 불가능하므로 스킵합니다."
-            echo "skip=true" >> $GITHUB_ENV
-          else
-            echo "✅ 선택된 전이 ID: $transition_id"
-            echo "transition_id=$transition_id" >> $GITHUB_ENV
-            echo "skip=false" >> $GITHUB_ENV
-          fi
-
-      - name: Close Jira issue dynamically
-        if: env.skip == 'false'
+      - name: Close Jira issue
+        if: env.JIRA_KEY != ''
         uses: atlassian/gajira-transition@v3
         with:
-          issue: ${{ steps.extract-key.outputs.jira_key }}
-          transition: ${{ env.transition_id }}
+          issue: ${{ env.JIRA_KEY }}
+          transition: Done
